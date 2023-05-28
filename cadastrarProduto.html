@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar produto</title>
+    <script src="Js/jquery.min.js"></script> <!-- Conexão com Jquery (externo) -->
+    <script src="Js/jquery.mask.min.js"></script> <!-- Conexão com Jquery (externo) -->
+    <script>
+        // Declarando o Banco de Dados (Lanchonete)
+        var db = window.openDatabase("Lanchonete", "2.0", "Mybase", 4048);
+        /* Criando a Tabela Produtos (armazena os produtos cadastrados) 
+        e a Tabela Usuarios (armazena os usuários cadastrados) */
+        db.transaction(function(criar){
+            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
+        });
+
+        $(document).ready(function(){
+            // Quando o botão "Cadastrar" for clicado uma função é executada
+            $("#finalizar").click(function(){
+                // Declarando os objetos responsáveis por armazenar o valor do produto
+                valorReais = document.getElementById('prProdutoR').value;
+                valorCentavos = document.getElementById('prProdutoC').value;
+
+                // Validação e formatação de dados
+                if(valorCentavos.length == ""){
+                    valorCentavos = "00";
+                }else if(valorCentavos.length == 1){
+                    if(valorCentavos == 0){
+                        valorCentavos = "00";
+                    }else{
+                        valorCentavos += "0";
+                    }
+                }
+                valorProduto = valorReais + "," + valorCentavos;
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Links para outras páginas deste projeto -->
+    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a> <!-- exibir dados do banco (produtos) e operações aritméticas (+, -, *, /), arrays -->
+    <a href="cadastrarProduto.html"><button>Inserir produto</button></a> <!-- inserção de dados no banco -->
+    <a href="editarProduto.html"><button>Editar produto</button></a> <!-- atualizar ou deletar dados do banco -->
+    <a href="loginUsuario.html"><button>Login</button></a>
+    
+    <!-- Captura de dados do usuário -->
+    <form onsubmit="salvar()">
+        <h3>Inserir Informações do Produto:</h3>
+        <span>Código do Produto: </span><br>
+        <input type="number" min="1" id="cdProduto" placeholder="Digite aqui" required><br><br>
+        <span>Nome do Produto: </span><br>
+        <input type="text" id="nmProduto" placeholder="Digite aqui" required><br><br>
+        <span>Valor do Produto: </span><br>
+        R$ <input type="text" title="Reais" style="text-align: center; width: 40px;" maxlength="5" id="prProdutoR" placeholder="00000" required> ,
+        <input type="text" title="Centavos" style="text-align: center; width: 15px;" maxlength="2" id="prProdutoC" placeholder="00"><br><br>
+        <span>Tipo do Produto: </span><br>
+        <input type="radio" id="lanche" name="tipoDoProduto" value="Lanche" required>
+        <label for="lanche">Lanche</label><br>
+        <input type="radio" id="bebida" name="tipoDoProduto" value="Bebida">
+        <label for="bebida">Bebida</label><br><br> 
+        <input id="finalizar" type="submit" value="Cadastrar">
+    </form>
+
+    <script>
+        // Declarando a "class Produto", responsável por armazenar os dados de um produto
+        class Produto{
+            constructor(codigoProduto, nomeProduto, precoProduto, tipoProduto){
+                this.codigoProduto = codigoProduto;
+                this.nomeProduto = nomeProduto;
+                this.precoProduto = precoProduto;
+                this.tipoProduto = tipoProduto;
+            }
+        }
+    </script>
+    <script src="Js/script.js"></script> <!-- Conexão com JavaScript (externo) -->
+</body>
+</html>
