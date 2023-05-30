@@ -16,52 +16,6 @@
             criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
         });
 
-        // Função para exibir os Lanches existentes
-        function exibirLanches(){
-            i = 0;
-            /* Declarando um Array e realizando um laço de repetição (for) para exibir os
-            registros do Banco de Dados onde "tipoProd" seja igual a "Lanche" */
-            dadosDoBanco = [];
-            db.transaction(function(tx){ 
-                tx.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Lanche'], function (tx, results) { 
-                    len = results.rows.length, i;  
-                    for (i = 0; i < len; i++) { 
-                        row = results.rows.item(i);
-                        dadosDoBanco = [
-                            row['CodID'],
-                            row['nomeProd'],
-                            row['valorProd'],
-                            row['tipoProd']
-                        ];
-                        document.getElementById('lista-lanches').innerHTML += dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[2] + "<br><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")'>Adicionar</button><br><br>";
-                    }
-                }, null); 
-            });
-        }
-
-        // Função para exibir as Bebidas existentes
-        function exibirBebidas(){
-            i = 0;
-            dadosDoBanco = []; // Array para armazenar os dados dos produtos
-            /* Declarando um laço de repetição (for) para exibir os
-            registros do Banco de Dados onde "tipoProd" seja igual a "Bebida" */
-            db.transaction(function(tx){ 
-                tx.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Bebida'], function (tx, results) { 
-                    len = results.rows.length, i;  
-                    for (i = 0; i < len; i++) { 
-                        row = results.rows.item(i);
-                        dadosDoBanco = [
-                            row['CodID'],
-                            row['nomeProd'],
-                            row['valorProd'],
-                            row['tipoProd']
-                        ];
-                        document.getElementById('lista-bebidas').innerHTML += dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[2] + "<br><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")'>Adicionar</button><br><br>";
-                    }
-                }, null); 
-            });
-        }
-
         ArrCodsProds = []; // Array para armazenar os produtos que estiverem no "carrinho"
         // Função para adicionar um Produto específico ao "carrinho" (lista de pedidos)
         function adicionar(codProduto){
@@ -82,104 +36,30 @@
                             row['valorProd'],
                             row['tipoProd']
                         ];
-                        
+
+                        /* Substituindo as vírgulas(,) por ponto(.) e transformando o objeto em
+                        valor numérico */
                         vlrDoProduto = dadosDoProduto[2].replace(',', '.');
                         vlrDoProduto = parseFloat(vlrDoProduto).toFixed(2);
-
+                        // Exibindo os produtos (dados) no carrinho
                         document.getElementById('carrinho').innerHTML += "<p id='p"+ dadosDoProduto[0] +"'>" + dadosDoProduto[1] + " ("+ dadosDoProduto[3] +") - <button onclick='menos(" + dadosDoProduto[0] + "," + vlrDoProduto + ")'>-</button> <span id='qntd" + dadosDoProduto[0] + "'>1</span><button onclick='mais(" + dadosDoProduto[0] + "," + vlrDoProduto + ")'>+</button><br> R$ <span class='totalVlrs' id='total"+ dadosDoProduto[0] +"'>"+ dadosDoProduto[2] +" </span><button onclick='retirar(" + dadosDoProduto[0] + ")'> Remover </button></p>";
-
+                        // Desabilita a função de adicionar o produto que já estiver no carrinho
                         if(txtString.indexOf('btn'+codProduto) == -1){
                             document.getElementById('btn'+codProduto).removeAttribute("onclick");
                         }
-
+                        // Torna o botão "calcular" visível
                         $("#calcular").css("display","");
                     }
                 }, null); 
             });
         }
-   
-        /* Função para adicionar +1 no valor da quantidade desejada de um Produto específico
-        e exibir o resultado da multiplicação entre quantidade e valor do Produto */
-        function mais(codProdutoAdd, nrVlrProdutoMais){
-            // Adicionar +1 na quantidade
-            var qntdAtual = document.getElementById('qntd'+codProdutoAdd).innerHTML;
-            var vlrQntdAtual = parseInt(qntdAtual);
-            vlrQntdAtual = vlrQntdAtual+1;
-            document.getElementById('qntd'+codProdutoAdd).innerHTML = vlrQntdAtual;
-
-            // Exibir o total (valor*quantidade)
-            qntdTexto = document.getElementById('qntd'+codProdutoAdd).innerHTML;
-            qntdTexto = parseFloat(qntdTexto);
-            nrVlrProdutoMais = (nrVlrProdutoMais).toFixed(2);
-            document.getElementById('total'+codProdutoAdd).innerHTML = (nrVlrProdutoMais*vlrQntdAtual).toFixed(2);
-        }
-
-        /* Função para subtrair -1 no valor da quantidade desejada de um Produto específico
-        e exibir o resultado da multiplicação entre quantidade e valor do Produto */
-        function menos(codProdutoSub, nrVlrProdutoMenos){
-            // Subtrair -1 na quantidade
-            var qntdAtual = document.getElementById('qntd'+codProdutoSub).innerHTML;
-            var vlrQntdAtual = parseInt(qntdAtual);
-            vlrQntdAtual = vlrQntdAtual-1;
-            if(vlrQntdAtual < 1){
-                vlrQntdAtual = 1;
-            }
-            document.getElementById('qntd'+codProdutoSub).innerHTML = vlrQntdAtual;
-
-            // Exibir o total (valor*quantidade)
-            qntdTexto = document.getElementById('qntd'+codProdutoSub).innerHTML;
-            qntdTexto = parseFloat(qntdTexto);
-            nrVlrProdutoMenos = (nrVlrProdutoMenos).toFixed(2);
-            document.getElementById('total'+codProdutoSub).innerHTML = (nrVlrProdutoMenos*vlrQntdAtual).toFixed(2);
-        }
-
-        // Função para remover um Produto do "carrinho"
-        function retirar(codRetirarProduto){
-            ArrCodsProds.splice(ArrCodsProds.indexOf(codRetirarProduto), 1);
-
-            document.getElementById('p'+codRetirarProduto).outerHTML = "";
-            document.getElementById('btn'+codRetirarProduto).setAttribute('onclick','adicionar('+codRetirarProduto+')');
-            if(document.getElementById('carrinho').innerHTML == ""){
-                // Faz os elementos abaixo desaparecerem
-                $("#calcular").css("display","none");
-                $("#valor").css("display", "none");
-            }
-        }
-
-        // Função para calcular o total da soma de todos valores existentes no "carrinho"
-        function calcular(){
-            // Faz o elemento abaixo aparecer
-            $("#valor").css("display", "");
-
-            total = 0;
-            resultadosTotal = [];
-            function somar(item){
-                v = document.getElementById('total'+item).innerHTML;
-                v = v.replace(',', '.');
-                v = parseFloat(v).toFixed(2);
-                resultadosTotal.push(v);
-            }
-            
-            ArrCodsProds.forEach(somar);
-            for(var i = 0; i < resultadosTotal.length; i++){
-                total += Number(resultadosTotal[i]);
-            }
-            
-            document.getElementById('total-valor').innerHTML = "R$" + total.toFixed(2);
-        }
-
-        // Função para finalizar o pedido
-        function finalizar(){
-            alert("Pedido confirmado com sucesso!");
-            location.reload();
-        }
     </script>
 </head>
 <body>
     <!-- Links para outras páginas deste projeto -->
-    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a> <!-- exibir dados do banco (produtos) e operações aritméticas (+, -, *, /), arrays -->
-    <a href="cadastrarProduto.html"><button>Inserir produto</button></a> <!-- inserção de dados no banco -->
-    <a href="editarProduto.html"><button>Editar produto</button></a> <!-- atualizar ou deletar dados do banco -->
+    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a>
+    <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
+    <a href="editarProduto.html"><button>Editar produto</button></a>
     <a href="loginUsuario.html"><button>Login</button></a>
     
     <!-- Onde os dados serão exibidos -->
