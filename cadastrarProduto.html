@@ -23,6 +23,15 @@
                 valorReais = document.getElementById('prProdutoR').value;
                 valorCentavos = document.getElementById('prProdutoC').value;
 
+                /* Se um preço não for declarado (ao menos os reais) uma mensagem é exibida
+                e o formulário (cadastro) não é finalizado */
+                if(valorReais == 0){
+                    alert("O preço do produto não foi declarado");
+                    event.preventDefault();
+                }
+                if(document.getElementById('validaCod').innerHTML != ""){
+                    event.preventDefault();
+                }
                 // Validação e formatação de dados
                 if(valorCentavos.length == ""){
                     valorCentavos = "00";
@@ -33,6 +42,8 @@
                         valorCentavos += "0";
                     }
                 }
+
+                // Formatação final do valor do produto
                 valorProduto = valorReais + "," + valorCentavos;
             });
         });
@@ -40,16 +51,17 @@
 </head>
 <body>
     <!-- Links para outras páginas deste projeto -->
-    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a> <!-- exibir dados do banco (produtos) e operações aritméticas (+, -, *, /), arrays -->
-    <a href="cadastrarProduto.html"><button>Inserir produto</button></a> <!-- inserção de dados no banco -->
-    <a href="editarProduto.html"><button>Editar produto</button></a> <!-- atualizar ou deletar dados do banco -->
+    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a>
+    <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
+    <a href="editarProduto.html"><button>Editar produto</button></a>
     <a href="loginUsuario.html"><button>Login</button></a>
     
     <!-- Captura de dados do usuário -->
     <form onsubmit="salvar()">
         <h3>Inserir Informações do Produto:</h3>
         <span>Código do Produto: </span><br>
-        <input type="number" min="1" id="cdProduto" placeholder="Digite aqui" required><br><br>
+        <input type="number" min="1" id="cdProduto" placeholder="Digite aqui" onblur="validaCod()" required>
+        <span id="validaCod"></span><br><br>
         <span>Nome do Produto: </span><br>
         <input type="text" id="nmProduto" placeholder="Digite aqui" required><br><br>
         <span>Valor do Produto: </span><br>
