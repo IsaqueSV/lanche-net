@@ -15,6 +15,9 @@
         db.transaction(function(criar){
             criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
         });
+        db.transaction(function(criar){
+            criar.executeSql('CREATE TABLE Usuarios(CodID INTEGER PRIMARY KEY, nomeUser TEXT, email TEXT, senha TEXT)');
+        });
 
         ArrCodsProds = []; // Array para armazenar os produtos que estiverem no "carrinho"
         // Função para adicionar um Produto específico ao "carrinho" (lista de pedidos)
@@ -61,6 +64,7 @@
     <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
     <a href="editarProduto.html"><button>Editar produto</button></a>
     <a href="loginUsuario.html"><button>Login</button></a>
+    <a href="cadastrarUsuario.html"><button>Cadastrar-se</button></a>
     
     <!-- Onde os dados serão exibidos -->
     <div id="dados">
