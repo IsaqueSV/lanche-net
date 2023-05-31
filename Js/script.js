@@ -9,8 +9,8 @@ function validaCod(){
     codValida = document.getElementById('cdProduto').value;
     /* Realizando um laço de repetição (for) para saber se já existe um produto com o código
     desejado nos registros do Banco de Dados */
-    db.transaction(function(tx){ 
-        tx.executeSql('SELECT * FROM Produtos WHERE CodID = ?', [codValida], function (tx, results) { 
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Produtos WHERE CodID = ?', [codValida], function (selecionar, results) { 
             len = results.rows.length, i;  
             for (i = 0; i < len; i++) { 
                 row = results.rows.item(i);
@@ -44,6 +44,7 @@ function salvar(){
     // Inserindo os dados do Produto na Tabela Produtos
     db.transaction(function(inserir){
         inserir.executeSql('INSERT INTO Produtos(CodID, nomeProd, valorProd, tipoProd) VALUES (?,?,?,?)',[novoProduto.codigoProduto, novoProduto.nomeProduto, novoProduto.precoProduto, novoProduto.tipoProduto]);
+        alert("Produto inserido com sucesso!");
     });
 }
 
@@ -53,8 +54,8 @@ function exibirLanches(){
     /* Declarando um Array e realizando um laço de repetição (for) para exibir os
     registros do Banco de Dados onde "tipoProd" seja igual a "Lanche" */
     dadosDoBanco = [];
-    db.transaction(function(tx){ 
-        tx.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Lanche'], function (tx, results) { 
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Lanche'], function (selecionar, results) { 
             len = results.rows.length, i;  
             for (i = 0; i < len; i++) { 
                 row = results.rows.item(i);
@@ -77,8 +78,8 @@ function exibirBebidas(){
     dadosDoBanco = []; // Array para armazenar os dados dos produtos
     /* Declarando um laço de repetição (for) para exibir os
     registros do Banco de Dados onde "tipoProd" seja igual a "Bebida" */
-    db.transaction(function(tx){ 
-        tx.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Bebida'], function (tx, results) { 
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Bebida'], function (selecionar, results) { 
             len = results.rows.length, i;  
             for (i = 0; i < len; i++) { 
                 row = results.rows.item(i);
@@ -179,4 +180,146 @@ function finalizar(){
     alert("Pedido confirmado com sucesso!");
     // Recarrega a página
     location.reload();
+}
+
+function cadastroUser(){
+    nomeUser = document.getElementById("nmUser").value;
+    emailUser = document.getElementById("emUser").value;
+    senhaUser = document.getElementById("snUser").value;
+    // Inserindo os dados do Produto na Tabela Produtos
+    db.transaction(function(inserir){
+        inserir.executeSql('INSERT INTO Usuarios(CodID, nomeUser, email, senha) VALUES (?,?,?,?)',[null, nomeUser, emailUser, senhaUser]);
+        alert("Usuário cadastrado com sucesso!");
+    });
+} 
+
+function login(){
+    i = 0;
+    event.preventDefault();
+    emailUser=document.getElementById("emUser").value;
+    senhaUser=document.getElementById("snUser").value;
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Usuarios WHERE email = ? AND senha = ?', [emailUser, senhaUser], function (selecionar, results) { 
+            len = results.rows.length, i;  
+            for (i = 0; i < len; i++) { 
+                row = results.rows.item(i);
+            }
+            // Se existir um aviso é exibido
+            if(i > 0){
+                alert("Usuário encontrado");
+                window.location.href = "index.html";
+            }else{
+                alert("Usuário inexistente");
+            }
+        }, null); 
+    });
+}
+
+// Função para exibir as Bebidas existentes [cadastrarPedido.html]
+function exibirProdutos(){
+    i = 0;
+    dadosDoBanco = []; // Array para armazenar os dados dos produtos
+    /* Declarando um laço de repetição (for) para exibir os
+    registros do Banco de Dados onde "tipoProd" seja igual a "Bebida" */
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Produtos', [], function(selecionar, results){ 
+            len = results.rows.length, i;  
+            for (i = 0; i < len; i++) { 
+                row = results.rows.item(i);
+                dadosDoBanco = [
+                    row['CodID'],
+                    row['nomeProd'],
+                    row['valorProd'],
+                    row['tipoProd']
+                ];
+                // Exibindo produto
+                document.getElementById('lista-produtos').innerHTML += "<p id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'>" + dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[2] + " - " + dadosDoBanco[3] + "</p>";
+            }
+        }, null); 
+    });
+}
+
+function exibirProdutoParaEditar(codDoProduto){
+    i = 0;
+    dadosDoBanco = []; // Array para armazenar os dados dos produtos
+    /* Declarando um laço de repetição (for) para exibir o produto
+    que deseja editar */
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Produtos WHERE CodID = ?', [codDoProduto], function(selecionar, results){ 
+            len = results.rows.length, i;  
+            for (i = 0; i < len; i++) { 
+                row = results.rows.item(i);
+                dadosDoBanco = [
+                    row['CodID'],
+                    row['nomeProd'],
+                    row['valorProd'],
+                    row['tipoProd']
+                ];
+
+                dinheiroFormatado = dadosDoBanco[2];
+                dividirFormatacao = dinheiroFormatado.split(",");
+
+                // Exibindo produto
+                document.getElementById('dados-produto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 40px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 15px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
+                if(dadosDoBanco[3] == "Lanche"){
+                    document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required checked><label for='lanche'>Lanche</label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida'><label for='bebida'>Bebida</label><br><br><button onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                }else{
+                    document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required><label for='lanche'>Lanche</label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida' checked><label for='bebida'>Bebida</label><br><br><button onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                }
+            }
+        }, null); 
+    });
+}
+
+function atualizarProduto(codDoProduto){
+    nvNmProdutoEditar = document.getElementById('nmProduto').value;
+    nvVlReaisProdutoEditar = document.getElementById('prProdutoR').value;
+    nvVlCentavosProdutoEditar = document.getElementById('prProdutoC').value;
+    nvVlProdutoEditar = nvVlReaisProdutoEditar + "," + nvVlCentavosProdutoEditar;
+
+    tiposProduto = document.getElementsByName('tipoDoProduto');
+    tiposProduto.forEach((tipoDoProduto) => {
+        if (tipoDoProduto.checked){
+            nvTipoProdutoEditar = [tipoDoProduto.value];
+        }
+    });
+
+    db.transaction(function(atualize){
+        atualize.executeSql('UPDATE Produtos SET nomeProd = ?, valorProd = ?, tipoProd = ? WHERE CodID = ?', [nvNmProdutoEditar, nvVlProdutoEditar, nvTipoProdutoEditar, codDoProduto]);
+        alert("Atualização realizada com sucesso!")
+        location.reload();
+    });
+}
+
+function excluirProduto(codDoProduto){
+    db.transaction(function(excluir){
+        excluir.executeSql('DELETE FROM Produtos WHERE CodID = ?', [codDoProduto]);
+        alert("Exclusão realizada com sucesso!")
+        location.reload();
+    });
+}
+
+function validaCodLogin(codParaValidar){
+    i = 0;
+    codValida = document.getElementById('cdProduto').value;
+    /* Realizando um laço de repetição (for) para saber se já existe um produto com o código
+    desejado nos registros do Banco de Dados */
+    db.transaction(function(selecionar){ 
+        selecionar.executeSql('SELECT * FROM Produtos WHERE CodID = ?', [codValida], function (selecionar, results) { 
+            len = results.rows.length, i;  
+            for (i = 0; i < len; i++) { 
+                row = results.rows.item(i);
+            }
+            // Se existir um aviso é exibido
+            if(i > 0){
+                if(codValida == codParaValidar){
+                    document.getElementById('validaCodLogin').innerHTML = "";
+                }else{
+                    document.getElementById('validaCodLogin').innerHTML = "<b style='color: red'>Em uso<b>";
+                }
+            }else{
+                document.getElementById('validaCodLogin').innerHTML = "";
+            }
+        }, null); 
+    });
 }
