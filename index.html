@@ -16,6 +16,9 @@
         db.transaction(function(criar){
             criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
         });
+        db.transaction(function(criar){
+            criar.executeSql('CREATE TABLE Usuarios(CodID INTEGER PRIMARY KEY, nomeUser TEXT, email TEXT, senha TEXT)');
+        });
     </script>
 </head>
 <body>
@@ -24,5 +27,6 @@
     <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
     <a href="editarProduto.html"><button>Editar produto</button></a>
     <a href="loginUsuario.html"><button>Login</button></a>
+    <a href="cadastrarUsuario.html"><button>Cadastrar-se</button></a>
 </body>
 </html>
