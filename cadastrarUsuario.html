@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro do usuário</title>
+    <script src="Js/script.js"></script>
+    <script>
+        // Declarando o Banco de Dados (Lanchonete)
+        var db = window.openDatabase("Lanchonete", "2.0", "Mybase", 4048);
+        /* Criando a Tabela Produtos (armazena os produtos cadastrados) 
+        e a Tabela Usuarios (armazena os usuários cadastrados) */
+        db.transaction(function(criar){
+            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
+        });
+        db.transaction(function(criar){
+            criar.executeSql('CREATE TABLE Usuarios(CodID INTEGER PRIMARY KEY, nomeUser TEXT, email TEXT, senha TEXT)');
+        });
+    </script>
+</head>
+<body>
+    <!-- Links para outras páginas deste projeto -->
+    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a>
+    <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
+    <a href="editarProduto.html"><button>Editar produto</button></a>
+    <a href="loginUsuario.html"><button>Login</button></a>
+    <a href="cadastrarUsuario.html"><button>Cadastrar-se</button></a>
+
+    <!-- Captura de dados do usuário -->
+    <form onsubmit="cadastroUser()">
+        <h3>Cadastro do usuário:</h3>
+        <span>Nome do usuário: </span><br>
+        <input type="text" id="nmUser" placeholder="Digite aqui" required><br><br>
+        <span>Email: </span><br>
+        <input type="email" id="emUser" placeholder="Digite aqui" required><br><br>
+        <span>Senha: </span><br>
+        <input type="password" id="snUser" placeholder="Digite aqui" required><br><br>   
+        <input id="finalizar" type="submit" value="Cadastrar">
+    </form>
+</body>
+</html>
