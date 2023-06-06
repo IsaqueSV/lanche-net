@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar produto</title>
+    <link rel="stylesheet" href="Css/style.css"> <!-- Conexão com o CSS (externo) -->
     <script src="Js/jquery.min.js"></script> <!-- Conexão com Jquery (externo) -->
     <script src="Js/jquery.mask.min.js"></script> <!-- Conexão com Jquery (externo) -->
     <script>
@@ -13,7 +14,7 @@
         /* Criando a Tabela Produtos (armazena os produtos cadastrados) 
         e a Tabela Usuarios (armazena os usuários cadastrados) */
         db.transaction(function(criar){
-            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
+            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, descProd TEXT, valorProd Real, tipoProd TEXT)');
         });
         db.transaction(function(criar){
             criar.executeSql('CREATE TABLE Usuarios(CodID INTEGER PRIMARY KEY, nomeUser TEXT, email TEXT, senha TEXT)');
@@ -53,43 +54,71 @@
     </script>
 </head>
 <body>
-    <!-- Links para outras páginas deste projeto -->
-    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a>
-    <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
-    <a href="editarProduto.html"><button>Editar produto</button></a>
-    <a href="loginUsuario.html"><button>Login</button></a>
-    <a href="cadastrarUsuario.html"><button>Cadastrar-se</button></a>
-    
+    <!-- Navbar -->
+   <header>
+        <!-- Links para outras páginas deste projeto -->
+        <div id="left">
+            <a href="index.html" style="font-size: 20px;">Lanche & Net</a>
+        </div>
+        <div id="right">
+            <a href="loginUsuario.html">Login</a>
+            <a href="cadastrarUsuario.html" style="margin-left: 30px;">Cadastrar-se</a>
+        </div>
+    </header>
+
+    <!-- Subnavbar -->
+    <div id="subnavbar">
+        <!-- Links para outras páginas deste projeto -->
+        <a href="cadastrarPedido.html" id="subnavbar-link">Fazer pedido</a>
+        <a href="cadastrarProduto.html" id="subnavbar-link">Inserir produto</a>
+        <a href="editarProduto.html" id="subnavbar-link">Editar produto</a>
+    </div>
+
     <!-- Captura de dados do usuário -->
-    <form onsubmit="salvar()">
-        <h3>Inserir Informações do Produto:</h3>
-        <span>Código do Produto: </span><br>
-        <input type="number" min="1" id="cdProduto" placeholder="Digite aqui" onblur="validaCod()" required>
-        <span id="validaCod"></span><br><br>
-        <span>Nome do Produto: </span><br>
-        <input type="text" id="nmProduto" placeholder="Digite aqui" required><br><br>
-        <span>Valor do Produto: </span><br>
-        R$ <input type="text" title="Reais" style="text-align: center; width: 40px;" maxlength="5" id="prProdutoR" placeholder="00000" required> ,
-        <input type="text" title="Centavos" style="text-align: center; width: 15px;" maxlength="2" id="prProdutoC" placeholder="00"><br><br>
-        <span>Tipo do Produto: </span><br>
-        <input type="radio" id="lanche" name="tipoDoProduto" value="Lanche" required>
-        <label for="lanche">Lanche</label><br>
-        <input type="radio" id="bebida" name="tipoDoProduto" value="Bebida">
-        <label for="bebida">Bebida</label><br><br> 
-        <input id="finalizar" type="submit" value="Cadastrar">
-    </form>
+    <div id="conteudo">
+        <div id="form-cad-prod">
+            <h1>CADASTRAR PRODUTO:</h1>
+            <label>Registre seu produto preenchendo o formulário abaixo</label>
+            <hr style="margin: 25px 0;">
+            <form onsubmit="salvar()">
+                <label>Código do Produto: </label><br>
+                <input type="number" min="1" id="cdProduto" placeholder="Digite aqui" onblur="validaCod()" required>
+                <span id="validaCod"></span><br><br>
+                <label>Nome do Produto: </label><br>
+                <input type="text" id="nmProduto" placeholder="Digite aqui" required><br><br>
+                <label>Descrição do Produto: </label><br>
+                <textarea id="dsProduto" style="height: 100px; font-family: Arial, sans-serif; resize: none;" placeholder="Digite aqui"></textarea><br><br>
+                <label>Valor do Produto: </label><br>
+                R$ <input type="text" title="Reais" style="text-align: center; width: 56px;" maxlength="5" id="prProdutoR" placeholder="00000" required> ,
+                <input type="text" title="Centavos" style="text-align: center; width: 29px;" maxlength="2" id="prProdutoC" placeholder="00"><br><br>
+                <label>Tipo do Produto: </label><br>
+                <input type="radio" id="lanche" name="tipoDoProduto" value="Lanche" required>
+                <label for="lanche">Lanche</label><br>
+                <input type="radio" id="bebida" name="tipoDoProduto" value="Bebida">
+                <label for="bebida">Bebida</label><br><br> 
+                <input id="finalizar" type="submit" value="Cadastrar">
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <!-- Link para o diretório onde este projeto está salvo -->
+    	<a href="https://github.com/IsaqueSV/lanche-net"><p>&copy; 2023 Lanche & Net. Todos os direitos reservados.</p></a>
+    </footer>
 
     <script>
         // Declarando a "class Produto", responsável por armazenar os dados de um produto
         class Produto{
-            constructor(codigoProduto, nomeProduto, precoProduto, tipoProduto){
+            constructor(codigoProduto, nomeProduto, descricaoProduto, precoProduto, tipoProduto){
                 this.codigoProduto = codigoProduto;
                 this.nomeProduto = nomeProduto;
+                this.descricaoProduto = descricaoProduto;
                 this.precoProduto = precoProduto;
                 this.tipoProduto = tipoProduto;
             }
         }
     </script>
-    <script src="Js/script.js"></script> <!-- Conexão com JavaScript (externo) -->
+    <script src="Js/script.js"></script><!-- Conexão com JavaScript (externo) -->
 </body>
 </html>
