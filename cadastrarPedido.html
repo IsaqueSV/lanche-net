@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar pedido</title>
+    <link rel="stylesheet" href="Css/style.css"> <!-- Conexão com o CSS (externo) -->
     <script src="Js/jquery.min.js"></script> <!-- Conexão com Jquery (externo) -->
     <script src="Js/script.js"></script> <!-- Conexão com JavaScript (externo) -->
     <script>
@@ -13,7 +14,7 @@
         /* Criando a Tabela Produtos (armazena os produtos cadastrados) 
         e a Tabela Usuarios (armazena os usuários cadastrados) */
         db.transaction(function(criar){
-            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
+            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, descProd TEXT, valorProd Real, tipoProd TEXT)');
         });
         db.transaction(function(criar){
             criar.executeSql('CREATE TABLE Usuarios(CodID INTEGER PRIMARY KEY, nomeUser TEXT, email TEXT, senha TEXT)');
@@ -22,6 +23,11 @@
         ArrCodsProds = []; // Array para armazenar os produtos que estiverem no "carrinho"
         // Função para adicionar um Produto específico ao "carrinho" (lista de pedidos)
         function adicionar(codProduto){
+            // Substitui o aviso pelo valor "" (vazio)
+            if(document.getElementById('carrinho').innerHTML == "Você não selecionou nenhum produto"){
+                document.getElementById('carrinho').innerHTML = "";
+            }
+
             i = 0;
             dadosDoProduto = []; // Array para armazenar os dados dos produtos
             ArrCodsProds.push(codProduto); // Adicionando um valor no Array "carrinho"
@@ -36,16 +42,17 @@
                         dadosDoProduto = [
                             row['CodID'],
                             row['nomeProd'],
+                            row['descProd'],
                             row['valorProd'],
                             row['tipoProd']
                         ];
 
                         /* Substituindo as vírgulas(,) por ponto(.) e transformando o objeto em
                         valor numérico */
-                        vlrDoProduto = dadosDoProduto[2].replace(',', '.');
+                        vlrDoProduto = dadosDoProduto[3].replace(',', '.');
                         vlrDoProduto = parseFloat(vlrDoProduto).toFixed(2);
                         // Exibindo os produtos (dados) no carrinho
-                        document.getElementById('carrinho').innerHTML += "<p id='p"+ dadosDoProduto[0] +"'>" + dadosDoProduto[1] + " ("+ dadosDoProduto[3] +") - <button onclick='menos(" + dadosDoProduto[0] + "," + vlrDoProduto + ")'>-</button> <span id='qntd" + dadosDoProduto[0] + "'>1</span><button onclick='mais(" + dadosDoProduto[0] + "," + vlrDoProduto + ")'>+</button><br> R$ <span class='totalVlrs' id='total"+ dadosDoProduto[0] +"'>"+ dadosDoProduto[2] +" </span><button onclick='retirar(" + dadosDoProduto[0] + ")'> Remover </button></p>";
+                        document.getElementById('carrinho').innerHTML += "<p class='produtoCarrinho' id='p"+ dadosDoProduto[0] +"'><span title='Nome' class='divisaoProduto1'>"+ dadosDoProduto[1] +"</span><span title='Tipo' style='text-align: center;' class='divisaoProduto2' id='span1'>"+ dadosDoProduto[4] +"</span><span style='text-align: center;' title='Quantidade' class='divisaoProduto2' id='span1'><button style='cursor: pointer; padding: 0 5px;' onclick='menos(" + dadosDoProduto[0] + "," + vlrDoProduto + ")'> - </button><span id='qntd" + dadosDoProduto[0] + "'> 1 </span><button style='cursor: pointer; padding: 0 5px;' onclick='mais(" + dadosDoProduto[0] + "," + vlrDoProduto + ")'> + </button></span><span title='Remover' style='text-align: center;' class='divisaoProduto2' id='span1'><button style='cursor: pointer; height: 25px; border: 0; background-color: none; width: 94%; padding: 0 5px;' onclick='retirar(" + dadosDoProduto[0] + ")'> Remover </button></span><span title='Preço total' style='text-align: right;' class='divisaoProduto2'>R$ <span class='totalVlrs' id='total"+ dadosDoProduto[0] +"'> "+ dadosDoProduto[3] +" </span></span></p>";
                         // Desabilita a função de adicionar o produto que já estiver no carrinho
                         if(txtString.indexOf('btn'+codProduto) == -1){
                             document.getElementById('btn'+codProduto).removeAttribute("onclick");
@@ -59,37 +66,78 @@
     </script>
 </head>
 <body>
-    <!-- Links para outras páginas deste projeto -->
-    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a>
-    <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
-    <a href="editarProduto.html"><button>Editar produto</button></a>
-    <a href="loginUsuario.html"><button>Login</button></a>
-    <a href="cadastrarUsuario.html"><button>Cadastrar-se</button></a>
-    
-    <!-- Onde os dados serão exibidos -->
-    <div id="dados">
-        <h1>LANCHES:</h1>
-        <p id="lista-lanches">
-            <script>
-                exibirLanches();
-            </script>
-        </p>
+    <!-- Navbar -->
+   <header>
+        <!-- Links para outras páginas deste projeto -->
+        <div id="left">
+            <a href="index.html" style="font-size: 20px;">Lanche & Net</a>
+        </div>
+        <div id="right">
+            <a href="loginUsuario.html">Login</a>
+            <a href="cadastrarUsuario.html" style="margin-left: 30px;">Cadastrar-se</a>
+        </div>
+    </header>
 
-        <h1>BEBIDAS:</h1>
-        <p id="lista-bebidas">
-            <script>
-                exibirBebidas();
-            </script>
-        </p>
+    <!-- Subnavbar -->
+    <div id="subnavbar">
+        <!-- Links para outras páginas deste projeto -->
+        <a href="cadastrarPedido.html" id="subnavbar-link">Fazer pedido</a>
+        <a href="cadastrarProduto.html" id="subnavbar-link">Inserir produto</a>
+        <a href="editarProduto.html" id="subnavbar-link">Editar produto</a>
     </div>
-    <!-- Onde os dados serão exibidos -->
-    <h1>PEDIDO:</h1>
-    <div id="carrinho"></div>
-    <button onclick="calcular()" style="display: none;" id="calcular">Calcular</button>
-    <div id="valor" style="display: none;">
-        <h1>TOTAL:</h1>
-        <span id="total-valor"></span>
-        <button onclick="finalizar()">Finalizar pedido</button>
+    
+    <div id="conteudo" style="margin-bottom: 60px;">
+        <!-- Onde a lista de todos os produtos sera exibida -->
+        <div id="lista-produtos">
+            <h1>LANCHES:</h1>
+            <hr style="margin: 15px 0;">
+            <!-- Onde a lista de lanches sera exibida -->
+            <p id="lista-lanches">
+                <script>
+                    exibirLanches();
+                </script>
+            </p>
+            
+            <h1>BEBIDAS:</h1>
+            <hr style="margin: 15px 0;">
+            <!-- Onde a lista de bebidas sera exibida -->
+            <p id="lista-bebidas">
+                <script>
+                    exibirBebidas();
+                </script>
+            </p>
+        </div>
+        
+        <!-- Exibindo o pedido (seleção de produtos desejados pelo usuário) -->
+        <div id="lista-pedido">
+            <h1>PEDIDO:</h1>
+            <hr style="margin: 15px 0;">
+            <!-- Onde a lista de produtos selecionados sera exibida -->
+            <div id="carrinho"></div>
+
+            <button onclick="calcular()" style="margin-top: 30px; display: none;" id="calcular">Calcular</button>
+            <!-- Onde a lista de produtos selecionados sera exibida -->
+            <div id="valor" style="margin-top: 60px; display: none;">
+                <h1>TOTAL:</h1>
+                <hr style="margin: 15px 0;">
+                <span id="total-valor"></span><br><br>
+                <button id="finalizar" onclick="finalizar()">Finalizar pedido</button>
+            </div>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <!-- Link para o diretório onde este projeto está salvo -->
+    	<a href="https://github.com/IsaqueSV/lanche-net"><p>&copy; 2023 Lanche & Net. Todos os direitos reservados.</p></a>
+    </footer>
+
+    <script>
+        // Se não existir nenhuma informação no elemento de id "carrinho"...
+        if(document.getElementById('carrinho').innerHTML == ""){
+            // Exibe um aviso
+            document.getElementById('carrinho').innerHTML = "Você não selecionou nenhum produto";
+        }
+    </script>
 </body>
 </html>
