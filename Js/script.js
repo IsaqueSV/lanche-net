@@ -1,8 +1,3 @@
-/*  Declarando a formatação dos inputs responsáveis por armazenar o preço do produto (reais
-e centavos) [cadastrarProduto.html] */ 
-$("input[id=prProdutoR]").mask("00000");
-$("input[id=prProdutoC]").mask("00");
-
 // Função responsável por validar se o código desejado esta, ou não, em uso [cadastrarProduto.html]
 function validaCod(){
     i = 0;
@@ -40,10 +35,13 @@ function salvar(){
     });
     
     // Declarando o objeto "novoProduto" e definindo que seu valor é uma nova "class Produto"
-    novoProduto = new Produto(document.getElementById('cdProduto').value, document.getElementById('nmProduto').value, valorProduto, tipo)
+    novoProduto = new Produto(document.getElementById('cdProduto').value, document.getElementById('nmProduto').value, document.getElementById('dsProduto').value, valorProduto, tipo);
+    if(novoProduto.descricaoProduto == ""){
+        novoProduto.descricaoProduto = "Produto sem descrição";
+    }
     // Inserindo os dados do Produto na Tabela Produtos
     db.transaction(function(inserir){
-        inserir.executeSql('INSERT INTO Produtos(CodID, nomeProd, valorProd, tipoProd) VALUES (?,?,?,?)',[novoProduto.codigoProduto, novoProduto.nomeProduto, novoProduto.precoProduto, novoProduto.tipoProduto]);
+        inserir.executeSql('INSERT INTO Produtos(CodID, nomeProd, descProd, valorProd, tipoProd) VALUES (?,?,?,?,?)',[novoProduto.codigoProduto, novoProduto.nomeProduto, novoProduto.descricaoProduto, novoProduto.precoProduto, novoProduto.tipoProduto]);
         alert("Produto inserido com sucesso!");
     });
 }
@@ -57,16 +55,22 @@ function exibirLanches(){
     db.transaction(function(selecionar){ 
         selecionar.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Lanche'], function (selecionar, results) { 
             len = results.rows.length, i;  
-            for (i = 0; i < len; i++) { 
-                row = results.rows.item(i);
-                dadosDoBanco = [
-                    row['CodID'],
-                    row['nomeProd'],
-                    row['valorProd'],
-                    row['tipoProd']
-                ];
-                // Exibindo produto (lanche)
-                document.getElementById('lista-lanches').innerHTML += dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[2] + "<br><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")'>Adicionar</button><br><br>";
+            if(len > 0){
+                for (i = 0; i < len; i++) { 
+                    row = results.rows.item(i);
+                    dadosDoBanco = [
+                        row['CodID'],
+                        row['nomeProd'],
+                        row['descProd'],
+                        row['valorProd'],
+                        row['tipoProd']
+                    ];
+    
+                    // Exibindo produto (lanche)
+                    document.getElementById('lista-lanches').innerHTML += "<div id='produto'>"+ dadosDoBanco[1] +"<p style='float: right;'> R$ "+ dadosDoBanco[3] +"</p><br><hr style='margin: 15px 0;'><p>"+ dadosDoBanco[2] +"</p><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")' style='cursor: pointer; float: right; padding: 5px 10px; border: 1px solid #999999; border-radius: 3px; margin-top: 20px;'>Adicionar</button></div>";                
+                }
+            }else{
+                document.getElementById('lista-lanches').innerHTML = "Nenhum lanche foi inserido";
             }
         }, null); 
     });
@@ -80,17 +84,22 @@ function exibirBebidas(){
     registros do Banco de Dados onde "tipoProd" seja igual a "Bebida" */
     db.transaction(function(selecionar){ 
         selecionar.executeSql('SELECT * FROM Produtos WHERE tipoProd = ?', ['Bebida'], function (selecionar, results) { 
-            len = results.rows.length, i;  
-            for (i = 0; i < len; i++) { 
-                row = results.rows.item(i);
-                dadosDoBanco = [
-                    row['CodID'],
-                    row['nomeProd'],
-                    row['valorProd'],
-                    row['tipoProd']
-                ];
-                // Exibindo produto (bebida)
-                document.getElementById('lista-bebidas').innerHTML += dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[2] + "<br><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")'>Adicionar</button><br><br>";
+            len = results.rows.length, i;
+            if(len > 0){
+                for (i = 0; i < len; i++) { 
+                    row = results.rows.item(i);
+                    dadosDoBanco = [
+                        row['CodID'],
+                        row['nomeProd'],
+                        row['descProd'],
+                        row['valorProd'],
+                        row['tipoProd']
+                    ];
+                    // Exibindo produto (bebida)
+                    document.getElementById('lista-bebidas').innerHTML += "<div id='produto'>"+ dadosDoBanco[1] +"<p style='float: right;'> R$ "+ dadosDoBanco[3] +"</p><br><hr style='margin: 15px 0;'><p>"+ dadosDoBanco[2] +"</p><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")' style='cursor: pointer; float: right; padding: 5px 10px; border: 1px solid #999999; border-radius: 3px; margin-top: 20px;'>Adicionar</button></div>"                
+                }
+            }else{
+                document.getElementById('lista-bebidas').innerHTML = "Nenhuma bebida foi inserida";
             }
         }, null); 
     });
@@ -104,13 +113,13 @@ function mais(codProdutoAdd, nrVlrProdutoMais){
     var vlrQntdAtual = parseInt(qntdAtual);
     vlrQntdAtual = vlrQntdAtual+1;
     // Exibe a quantidade
-    document.getElementById('qntd'+codProdutoAdd).innerHTML = vlrQntdAtual;
+    document.getElementById('qntd'+codProdutoAdd).innerHTML = " " + vlrQntdAtual + " ";
 
     // Exibir o total (valor*quantidade)
     qntdTexto = document.getElementById('qntd'+codProdutoAdd).innerHTML;
     qntdTexto = parseFloat(qntdTexto);
     nrVlrProdutoMais = (nrVlrProdutoMais).toFixed(2);
-    document.getElementById('total'+codProdutoAdd).innerHTML = (nrVlrProdutoMais*vlrQntdAtual).toFixed(2);
+    document.getElementById('total'+codProdutoAdd).innerHTML = " " + (nrVlrProdutoMais*vlrQntdAtual).toFixed(2) + " ";
 }
 
 /* Função para subtrair -1 no valor da quantidade desejada de um Produto específico
@@ -124,7 +133,7 @@ function menos(codProdutoSub, nrVlrProdutoMenos){
         vlrQntdAtual = 1;
     }
     // Exibe a quantidade
-    document.getElementById('qntd'+codProdutoSub).innerHTML = vlrQntdAtual;
+    document.getElementById('qntd'+codProdutoSub).innerHTML = " " + vlrQntdAtual + " ";
 
     // Exibir o total (valor*quantidade)
     qntdTexto = document.getElementById('qntd'+codProdutoSub).innerHTML;
@@ -142,6 +151,8 @@ function retirar(codRetirarProduto){
     // Devolve o atributo "adicionar" para o Produto que foi removido
     document.getElementById('btn'+codRetirarProduto).setAttribute('onclick','adicionar('+codRetirarProduto+')');
     if(document.getElementById('carrinho').innerHTML == ""){
+        // Exibe um aviso
+        document.getElementById('carrinho').innerHTML = "Você não selecionou nenhum produto";
         // Faz os elementos abaixo desaparecerem
         $("#calcular").css("display","none");
         $("#valor").css("display", "none");
@@ -182,6 +193,7 @@ function finalizar(){
     location.reload();
 }
 
+// Função para cadastrar o usuário [cadastrarUsuario.html]
 function cadastroUser(){
     nomeUser = document.getElementById("nmUser").value;
     emailUser = document.getElementById("emUser").value;
@@ -191,13 +203,15 @@ function cadastroUser(){
         inserir.executeSql('INSERT INTO Usuarios(CodID, nomeUser, email, senha) VALUES (?,?,?,?)',[null, nomeUser, emailUser, senhaUser]);
         alert("Usuário cadastrado com sucesso!");
     });
-} 
+}
 
+// Função para efetuar o login do usuário [loginUsuario.html]
 function login(){
     i = 0;
     event.preventDefault();
     emailUser=document.getElementById("emUser").value;
     senhaUser=document.getElementById("snUser").value;
+    // Validação para saber se existe ou não um usuário com o email e senha digitados
     db.transaction(function(selecionar){ 
         selecionar.executeSql('SELECT * FROM Usuarios WHERE email = ? AND senha = ?', [emailUser, senhaUser], function (selecionar, results) { 
             len = results.rows.length, i;  
@@ -215,12 +229,12 @@ function login(){
     });
 }
 
-// Função para exibir as Bebidas existentes [cadastrarPedido.html]
+// Função para exibir todos os Produtos existentes [editarProduto.html]
 function exibirProdutos(){
     i = 0;
     dadosDoBanco = []; // Array para armazenar os dados dos produtos
-    /* Declarando um laço de repetição (for) para exibir os
-    registros do Banco de Dados onde "tipoProd" seja igual a "Bebida" */
+    /* Declarando um laço de repetição (for) para exibir todos os
+    registros do Banco de Dados */
     db.transaction(function(selecionar){ 
         selecionar.executeSql('SELECT * FROM Produtos', [], function(selecionar, results){ 
             len = results.rows.length, i;  
@@ -229,19 +243,21 @@ function exibirProdutos(){
                 dadosDoBanco = [
                     row['CodID'],
                     row['nomeProd'],
+                    row['descProd'],
                     row['valorProd'],
                     row['tipoProd']
                 ];
                 // Exibindo produto
-                document.getElementById('lista-produtos').innerHTML += "<p id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'>" + dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[2] + " - " + dadosDoBanco[3] + "</p>";
+                document.getElementById('lista-produtos').innerHTML += "<p id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'>" + dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[3] + " - " + dadosDoBanco[4] + "</p>";
             }
         }, null); 
     });
 }
 
+// Função para exibir o Produto especifico que o usuário desejar editar
 function exibirProdutoParaEditar(codDoProduto){
     i = 0;
-    dadosDoBanco = []; // Array para armazenar os dados dos produtos
+    dadosDoBanco = []; // Array para armazenar os dados do produto
     /* Declarando um laço de repetição (for) para exibir o produto
     que deseja editar */
     db.transaction(function(selecionar){ 
@@ -252,15 +268,16 @@ function exibirProdutoParaEditar(codDoProduto){
                 dadosDoBanco = [
                     row['CodID'],
                     row['nomeProd'],
+                    row['descProd'],
                     row['valorProd'],
                     row['tipoProd']
                 ];
-
-                dinheiroFormatado = dadosDoBanco[2];
+                // Dividindo o dinheiro (Reais e Centavos)
+                dinheiroFormatado = dadosDoBanco[3];
                 dividirFormatacao = dinheiroFormatado.split(",");
 
                 // Exibindo produto
-                document.getElementById('dados-produto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 40px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 15px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
+                document.getElementById('dados-produto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br><textarea id='dsProduto' style='height: 100px; font-family: Arial, sans-serif; resize: none;' placeholder='Digite aqui'>"+dadosDoBanco[2]+"</textarea><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 56px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 29px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
                 if(dadosDoBanco[3] == "Lanche"){
                     document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required checked><label for='lanche'>Lanche</label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida'><label for='bebida'>Bebida</label><br><br><button onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
                 }else{
@@ -271,10 +288,24 @@ function exibirProdutoParaEditar(codDoProduto){
     });
 }
 
+// Função para atualizar os dados do produto desejado no Banco de Dados
 function atualizarProduto(codDoProduto){
+    // Produto semelhante ao de introduzir um produto no Banco
     nvNmProdutoEditar = document.getElementById('nmProduto').value;
+    nvDsProdutoEditar = document.getElementById('dsProduto').value;
     nvVlReaisProdutoEditar = document.getElementById('prProdutoR').value;
     nvVlCentavosProdutoEditar = document.getElementById('prProdutoC').value;
+    // Formatação de dados    
+    if(nvVlCentavosProdutoEditar.length == ""){
+        nvVlCentavosProdutoEditar = "00";
+    }else if(nvVlCentavosProdutoEditar.length == 1){
+        if(nvVlCentavosProdutoEditar == 0){
+            nvVlCentavosProdutoEditar = "00";
+        }else{
+            nvVlCentavosProdutoEditar += "0";
+        }
+    }
+
     nvVlProdutoEditar = nvVlReaisProdutoEditar + "," + nvVlCentavosProdutoEditar;
 
     tiposProduto = document.getElementsByName('tipoDoProduto');
@@ -284,13 +315,15 @@ function atualizarProduto(codDoProduto){
         }
     });
 
+    // Atualizando os dados
     db.transaction(function(atualize){
-        atualize.executeSql('UPDATE Produtos SET nomeProd = ?, valorProd = ?, tipoProd = ? WHERE CodID = ?', [nvNmProdutoEditar, nvVlProdutoEditar, nvTipoProdutoEditar, codDoProduto]);
+        atualize.executeSql('UPDATE Produtos SET nomeProd = ?, descProd = ?, valorProd = ?, tipoProd = ? WHERE CodID = ?', [nvNmProdutoEditar, nvDsProdutoEditar, nvVlProdutoEditar, nvTipoProdutoEditar, codDoProduto]);
         alert("Atualização realizada com sucesso!")
         location.reload();
     });
 }
 
+// Função para deletar um Produto do Banco de Dados
 function excluirProduto(codDoProduto){
     db.transaction(function(excluir){
         excluir.executeSql('DELETE FROM Produtos WHERE CodID = ?', [codDoProduto]);
@@ -299,6 +332,7 @@ function excluirProduto(codDoProduto){
     });
 }
 
+// Função responsável por validar se o código desejado esta, ou não, em uso [cadastrarProduto.html] 
 function validaCodLogin(codParaValidar){
     i = 0;
     codValida = document.getElementById('cdProduto').value;
