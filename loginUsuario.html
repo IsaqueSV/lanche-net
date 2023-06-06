@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login do usuário</title>
-    <script src="Js/jquery.min.js"></script>
-    <script src="Js/script.js"></script>
+    <link rel="stylesheet" href="Css/style.css"> <!-- Conexão com o CSS (externo) -->
+    <script src="Js/jquery.min.js"></script> <!-- Conexão com Jquery (externo) -->
+    <script src="Js/script.js"></script> <!-- Conexão com JavaScript (externo) -->
     <script>
         // Declarando o Banco de Dados (Lanchonete)
         var db = window.openDatabase("Lanchonete", "2.0", "Mybase", 4048);
         /* Criando a Tabela Produtos (armazena os produtos cadastrados) 
         e a Tabela Usuarios (armazena os usuários cadastrados) */
         db.transaction(function(criar){
-            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, valorProd Real, tipoProd TEXT)');
+            criar.executeSql('CREATE TABLE Produtos(CodID INTEGER PRIMARY KEY, nomeProd TEXT, descProd TEXT, valorProd Real, tipoProd TEXT)');
         });
         db.transaction(function(criar){
             criar.executeSql('CREATE TABLE Usuarios(CodID INTEGER PRIMARY KEY, nomeUser TEXT, email TEXT, senha TEXT)');
@@ -21,21 +22,46 @@
     </script>
 </head>
 <body>
-    <!-- Links para outras páginas deste projeto -->
-    <a href="cadastrarPedido.html"><button>Fazer pedido</button></a>
-    <a href="cadastrarProduto.html"><button>Inserir produto</button></a>
-    <a href="editarProduto.html"><button>Editar produto</button></a>
-    <a href="loginUsuario.html"><button>Login</button></a>
-    <a href="cadastrarUsuario.html"><button>Cadastrar-se</button></a>
+    <!-- Navbar -->
+    <header>
+        <!-- Links para outras páginas deste projeto -->
+		<div id="left">
+			<a href="index.html" style="font-size: 20px;">Lanche & Net</a>
+		</div>
+		<div id="right">
+			<a href="loginUsuario.html">Login</a>
+			<a href="cadastrarUsuario.html" style="margin-left: 30px;">Cadastrar-se</a>
+		</div>
+  	</header>
+
+    <!-- Subnavbar -->
+    <div id="subnavbar">
+        <!-- Links para outras páginas deste projeto -->
+        <a href="cadastrarPedido.html" id="subnavbar-link">Fazer pedido</a>
+        <a href="cadastrarProduto.html" id="subnavbar-link">Inserir produto</a>
+        <a href="editarProduto.html" id="subnavbar-link">Editar produto</a>
+    </div>
 
     <!-- Captura de dados do usuário -->
-    <form onsubmit="login()">
-        <h3>Login do usuário:</h3>
-        <span>Email: </span><br>
-        <input type="email" id="emUser" placeholder="Digite aqui" required><br><br>
-        <span>Senha: </span><br>
-        <input type="password" id="snUser" placeholder="Digite aqui" required><br><br>
-        <input id="finalizar" type="submit" value="Logar">
-    </form>
+    <div id="conteudo">
+        <div id="form-log-user">
+            <h1>LOGIN:</h1>
+            <label>Acesse sua conta preenchendo o formulário abaixo</label>
+            <hr style="margin: 25px 0;">
+            <form onsubmit="login()">
+                <label>Email: </label><br>
+                <input type="email" id="emUser" placeholder="Digite aqui" required><br><br>
+                <label>Senha: </label><br>
+                <input type="password" id="snUser" placeholder="Digite aqui" required><br><br>
+                <input id="finalizar" type="submit" value="Logar">
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <!-- Link para o diretório onde este projeto está salvo -->
+    	<a href="https://github.com/IsaqueSV/lanche-net"><p>&copy; 2023 Lanche & Net. Todos os direitos reservados.</p></a>
+    </footer>
 </body>
 </html>
