@@ -102,7 +102,7 @@ footer p{
 h1{
     color: #333;
 }
-#form-cad-prod, #form-cad-user, #form-log-user, #lista-produtos{
+#form-cad-prod, #form-cad-user, #form-log-user, #lista-produtos, #editar-prod{
     padding: 55px 100px 55px 100px;
 }
 #lista-pedido{
