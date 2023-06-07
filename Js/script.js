@@ -238,20 +238,21 @@ function exibirProdutos(){
     db.transaction(function(selecionar){ 
         selecionar.executeSql('SELECT * FROM Produtos', [], function(selecionar, results){ 
             len = results.rows.length, i;
-              
-
-            for (i = 0; i < len; i++) { 
-                row = results.rows.item(i);
-                dadosDoBanco = [
-                    row['CodID'],
-                    row['nomeProd'],
-                    row['descProd'],
-                    row['valorProd'],
-                    row['tipoProd']
-                ];
-                // Exibindo produto
-                document.getElementById('todos-produtos').innerHTML += "<p style='cursor: pointer; padding-bottom: 10px; padding-top: 10px;' class='produtoCarrinho' id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'><span title='Código' style='width: 20%;'>"+ dadosDoBanco[0] +"</span><span title='Nome' style='width: 20%; text-align: center;'>"+ dadosDoBanco[1] +"</span><span title='Preço' style='width: 20%; text-align: center;'>"+ dadosDoBanco[3] +"</span><span title='Tipo' style='width: 20%; text-align: right;'>"+ dadosDoBanco[4] +"</span></p>";
-                //document.getElementById('todos-produtos').innerHTML += "<p id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'>" + dadosDoBanco[0] + " - " + dadosDoBanco[1] + " - " + dadosDoBanco[3] + " - " + dadosDoBanco[4] + "</p>";
+            if(len > 0){
+                for (i = 0; i < len; i++) { 
+                    row = results.rows.item(i);
+                    dadosDoBanco = [
+                        row['CodID'],
+                        row['nomeProd'],
+                        row['descProd'],
+                        row['valorProd'],
+                        row['tipoProd']
+                    ];
+                    // Exibindo produto
+                    document.getElementById('todos-produtos').innerHTML += "<p style='cursor: pointer; padding-bottom: 10px; padding-top: 10px;' class='produtoCarrinho' id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'><span title='Código' style='width: 20%;'>"+ dadosDoBanco[0] +"</span><span title='Nome' style='width: 20%; text-align: center;'>"+ dadosDoBanco[1] +"</span><span title='Preço' style='width: 20%; text-align: center;'>"+ dadosDoBanco[3] +"</span><span title='Tipo' style='width: 20%; text-align: right;'>"+ dadosDoBanco[4] +"</span></p>";
+                }
+            }else{
+                document.getElementById('todos-produtos').innerHTML = "Nenhum produto foi registrado";
             }
         }, null); 
     });
@@ -265,27 +266,31 @@ function exibirProdutoParaEditar(codDoProduto){
     que deseja editar */
     db.transaction(function(selecionar){ 
         selecionar.executeSql('SELECT * FROM Produtos WHERE CodID = ?', [codDoProduto], function(selecionar, results){ 
-            len = results.rows.length, i;  
-            for (i = 0; i < len; i++) { 
-                row = results.rows.item(i);
-                dadosDoBanco = [
-                    row['CodID'],
-                    row['nomeProd'],
-                    row['descProd'],
-                    row['valorProd'],
-                    row['tipoProd']
-                ];
-                // Dividindo o dinheiro (Reais e Centavos)
-                dinheiroFormatado = dadosDoBanco[3];
-                dividirFormatacao = dinheiroFormatado.split(",");
+            len = results.rows.length, i;
+            if(len > 0){ 
+                for (i = 0; i < len; i++) { 
+                    row = results.rows.item(i);
+                    dadosDoBanco = [
+                        row['CodID'],
+                        row['nomeProd'],
+                        row['descProd'],
+                        row['valorProd'],
+                        row['tipoProd']
+                    ];
+                    // Dividindo o dinheiro (Reais e Centavos)
+                    dinheiroFormatado = dadosDoBanco[3];
+                    dividirFormatacao = dinheiroFormatado.split(",");
 
-                // Exibindo produto
-                document.getElementById('dados-produto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br><textarea id='dsProduto' style='height: 130px; width: 250px; font-family: Arial, sans-serif; resize: none;' placeholder='Digite aqui'>"+dadosDoBanco[2]+"</textarea><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 56px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 29px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
-                if(dadosDoBanco[3] == "Lanche"){
-                    document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required checked><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida'><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
-                }else{
-                    document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida' checked><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                    // Exibindo produto
+                    document.getElementById('dados-produto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br><textarea id='dsProduto' style='height: 130px; width: 250px; font-family: Arial, sans-serif; resize: none;' placeholder='Digite aqui'>"+dadosDoBanco[2]+"</textarea><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 56px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 29px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
+                    if(dadosDoBanco[3] == "Lanche"){
+                        document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required checked><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida'><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                    }else{
+                        document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida' checked><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                    }
                 }
+            }else{
+                document.getElementById('dados-produto').innerHTML = "Nenhum produto foi selecionado";
             }
         }, null); 
     });
