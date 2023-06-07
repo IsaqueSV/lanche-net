@@ -1,3 +1,8 @@
+/*  Declarando a formatação dos inputs responsáveis por armazenar o preço do produto (reais
+e centavos) [cadastrarProduto.html] */ 
+$("input[id=prProdutoR]").mask("00000");
+$("input[id=prProdutoC]").mask("00");
+
 // Função responsável por validar se o código desejado esta, ou não, em uso [cadastrarProduto.html]
 function validaCod(){
     i = 0;
