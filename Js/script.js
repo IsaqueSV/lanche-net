@@ -194,7 +194,7 @@ function calcular(){
 // Função para finalizar o pedido [cadastrarPedido.html]
 function finalizar(){
     resposta1 = prompt("Deseja adicionar um desconto de 10%? (S ou N)");
-    if(resposta1 == "Sim" || resposta1 == "1" || resposta1 == "S" || resposta1 == "s"){
+    if(resposta1 == "Sim" || resposta1 == "sim" || resposta1 == "1" || resposta1 == "S" || resposta1 == "s"){
         // Removendo o símbolo "R$" da string
         valorTotal = (document.getElementById('totalValor').innerHTML).substring(2);
         // Transformando a string em número
