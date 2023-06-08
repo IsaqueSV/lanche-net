@@ -194,10 +194,12 @@ function calcular(){
 // Função para finalizar o pedido [cadastrarPedido.html]
 function finalizar(){
     resposta1 = prompt("Deseja adicionar um desconto de 10%? (S ou N)");
-    if(resposta1 == "Sim" || resposta1 == "1" || resposta1 == "S" || resposta1 == "N"){
+    if(resposta1 == "Sim" || resposta1 == "1" || resposta1 == "S" || resposta1 == "s"){
         // Removendo o símbolo "R$" da string
         valorTotal = (document.getElementById('totalValor').innerHTML).substring(2);
+        // Transformando a string em número
         desconto = (Number(valorTotal)/10).toFixed(2);
+        // Exibindo o novo valor total
         alert("Desconto adicionado! Valor atual: " + (valorTotal - desconto).toFixed(2));
     }else{
         alert("Pedido confirmado com sucesso!");
