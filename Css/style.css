@@ -53,7 +53,7 @@ header a, footer a{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 /* Formatando os links da subnavbar */
-#subnavbar-link{
+#subnavbarLink{
     flex-grow: 1;
     text-align: center;
     padding: 5px 0;
@@ -62,18 +62,18 @@ header a, footer a{
     transition: background-color 0.3s ease-in-out;
 }
 /* Efeito quando o cursor estiver no link da subnavbar */
-#subnavbar-link:hover{
+#subnavbarLink:hover{
     background-color: #ddd;
     color: #222;
 }
 /* Formatando o primeiro link da subnavbar */
-#subnavbar-link:first-child{
+#subnavbarLink:first-child{
     border-right: 1px solid #ddd;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
 }
 /* Formatando o último link da subnavbar */
-#subnavbar-link:last-child{
+#subnavbarLink:last-child{
     border-left: 1px solid #ddd;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -102,13 +102,13 @@ footer p{
 h1{
     color: #333;
 }
-#form-cad-prod, #form-cad-user, #form-log-user, #lista-produtos, #editar-prod{
+#formCadProd, #formCadUser, #formLogUser, #listaProdutos, #editarProd{
     padding: 55px 100px 55px 100px;
 }
-#lista-pedido{
+#listaPedido{
     padding: 0 100px;
 }
-#lista-lanches, #lista-bebidas{
+#listaLanches, #listaBebidas{
     width: 100%;
     margin-bottom: 40px;
 }

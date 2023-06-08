@@ -72,10 +72,10 @@ function exibirLanches(){
                     ];
     
                     // Exibindo produto (lanche)
-                    document.getElementById('lista-lanches').innerHTML += "<div id='produto'>"+ dadosDoBanco[1] +"<p style='float: right;'> R$ "+ dadosDoBanco[3] +"</p><br><hr style='margin: 15px 0;'><p>"+ dadosDoBanco[2] +"</p><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")' style='cursor: pointer; float: right; padding: 5px 10px; border: 1px solid #999999; border-radius: 3px; margin-top: 20px;'>Adicionar</button></div>";                
+                    document.getElementById('listaLanches').innerHTML += "<div id='produto'>"+ dadosDoBanco[1] +"<p style='float: right;'> R$ "+ dadosDoBanco[3] +"</p><br><hr style='margin: 15px 0;'><p>"+ dadosDoBanco[2] +"</p><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")' style='cursor: pointer; float: right; padding: 5px 10px; border: 1px solid #999999; border-radius: 3px; margin-top: 20px;'>Adicionar</button></div>";                
                 }
             }else{
-                document.getElementById('lista-lanches').innerHTML = "Nenhum lanche foi inserido";
+                document.getElementById('listaLanches').innerHTML = "Nenhum lanche foi inserido";
             }
         }, null); 
     });
@@ -101,10 +101,10 @@ function exibirBebidas(){
                         row['tipoProd']
                     ];
                     // Exibindo produto (bebida)
-                    document.getElementById('lista-bebidas').innerHTML += "<div id='produto'>"+ dadosDoBanco[1] +"<p style='float: right;'> R$ "+ dadosDoBanco[3] +"</p><br><hr style='margin: 15px 0;'><p>"+ dadosDoBanco[2] +"</p><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")' style='cursor: pointer; float: right; padding: 5px 10px; border: 1px solid #999999; border-radius: 3px; margin-top: 20px;'>Adicionar</button></div>"                
+                    document.getElementById('listaBebidas').innerHTML += "<div id='produto'>"+ dadosDoBanco[1] +"<p style='float: right;'> R$ "+ dadosDoBanco[3] +"</p><br><hr style='margin: 15px 0;'><p>"+ dadosDoBanco[2] +"</p><button id='btn" + dadosDoBanco[0] + "' onclick='adicionar("+ dadosDoBanco[0] +")' style='cursor: pointer; float: right; padding: 5px 10px; border: 1px solid #999999; border-radius: 3px; margin-top: 20px;'>Adicionar</button></div>"                
                 }
             }else{
-                document.getElementById('lista-bebidas').innerHTML = "Nenhuma bebida foi inserida";
+                document.getElementById('listaBebidas').innerHTML = "Nenhuma bebida foi inserida";
             }
         }, null); 
     });
@@ -188,12 +188,20 @@ function calcular(){
         total += Number(resultadosTotal[i]);
     }
     // Exibindo o total de tudo
-    document.getElementById('total-valor').innerHTML = "R$" + total.toFixed(2);
+    document.getElementById('totalValor').innerHTML = "R$" + total.toFixed(2);
 }
 
 // Função para finalizar o pedido [cadastrarPedido.html]
 function finalizar(){
-    alert("Pedido confirmado com sucesso!");
+    resposta1 = prompt("Deseja adicionar um desconto de 10%? (S ou N)");
+    if(resposta1 == "Sim" || resposta1 == "1" || resposta1 == "S" || resposta1 == "N"){
+        // Removendo o símbolo "R$" da string
+        valorTotal = (document.getElementById('totalValor').innerHTML).substring(2);
+        desconto = (Number(valorTotal)/10).toFixed(2);
+        alert("Desconto adicionado! Valor atual: " + (valorTotal - desconto).toFixed(2));
+    }else{
+        alert("Pedido confirmado com sucesso!");
+    }
     // Recarrega a página
     location.reload();
 }
@@ -254,10 +262,10 @@ function exibirProdutos(){
                         row['tipoProd']
                     ];
                     // Exibindo produto
-                    document.getElementById('todos-produtos').innerHTML += "<p style='cursor: pointer; padding-bottom: 10px; padding-top: 10px;' class='produtoCarrinho' id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'><span title='Código' style='width: 20%;'>"+ dadosDoBanco[0] +"</span><span title='Nome' style='width: 20%; text-align: center;'>"+ dadosDoBanco[1] +"</span><span title='Preço' style='width: 20%; text-align: center;'>"+ dadosDoBanco[3] +"</span><span title='Tipo' style='width: 20%; text-align: right;'>"+ dadosDoBanco[4] +"</span></p>";
+                    document.getElementById('todosProdutos').innerHTML += "<p style='cursor: pointer; padding-bottom: 10px; padding-top: 10px;' class='produtoCarrinho' id='editar("+ dadosDoBanco[0] +")' onclick='exibirProdutoParaEditar("+ dadosDoBanco[0] +")'><span title='Código' style='width: 20%;'>"+ dadosDoBanco[0] +"</span><span title='Nome' style='width: 20%; text-align: center;'>"+ dadosDoBanco[1] +"</span><span title='Preço' style='width: 20%; text-align: center;'>"+ dadosDoBanco[3] +"</span><span title='Tipo' style='width: 20%; text-align: right;'>"+ dadosDoBanco[4] +"</span></p>";
                 }
             }else{
-                document.getElementById('todos-produtos').innerHTML = "Nenhum produto foi registrado";
+                document.getElementById('todosProdutos').innerHTML = "Nenhum produto foi registrado";
             }
         }, null); 
     });
@@ -287,15 +295,15 @@ function exibirProdutoParaEditar(codDoProduto){
                     dividirFormatacao = dinheiroFormatado.split(",");
 
                     // Exibindo produto
-                    document.getElementById('dados-produto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br><textarea id='dsProduto' style='height: 130px; width: 250px; font-family: Arial, sans-serif; resize: none;' placeholder='Digite aqui'>"+dadosDoBanco[2]+"</textarea><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 56px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 29px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
+                    document.getElementById('dadosProduto').innerHTML = "<input type='number' min='1' id='cdProduto' placeholder='Digite aqui' onblur='validaCodLogin("+ dadosDoBanco[0] +")' disabled value='"+ dadosDoBanco[0] +"'><span id='validaCodLogin'></span><br><br><input type='text' id='nmProduto' placeholder='Digite aqui' required value='"+ dadosDoBanco[1] +"'><br><br><textarea id='dsProduto' style='height: 130px; width: 250px; font-family: Arial, sans-serif; resize: none;' placeholder='Digite aqui'>"+dadosDoBanco[2]+"</textarea><br><br>R$ <input type='text' title='Reais' style='text-align: center; width: 56px;' maxlength='5' id='prProdutoR' placeholder='00000' value='"+ dividirFormatacao[0] +"' required> , <input type='text' title='Centavos' style='text-align: center; width: 29px;' maxlength='2' id='prProdutoC' value='"+ dividirFormatacao[1] +"' placeholder='00'><br><br>";
                     if(dadosDoBanco[3] == "Lanche"){
-                        document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required checked><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida'><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                        document.getElementById('dadosProduto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required checked><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida'><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
                     }else{
-                        document.getElementById('dados-produto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida' checked><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
+                        document.getElementById('dadosProduto').innerHTML += "<span>Tipo do Produto: </span><br><input type='radio' id='lanche' name='tipoDoProduto' value='Lanche' required><label for='lanche'> Lanche </label><br><input type='radio' id='bebida' name='tipoDoProduto' value='Bebida' checked><label for='bebida'> Bebida </label><br><br><button style='margin-right: 20px;' id='finalizar' onclick='atualizarProduto("+ codDoProduto +")'>Confirmar</button><button id='finalizar' onclick='excluirProduto("+ codDoProduto +")'>Excluir</button>";
                     }
                 }
             }else{
-                document.getElementById('dados-produto').innerHTML = "Nenhum produto foi selecionado";
+                document.getElementById('dadosProduto').innerHTML = "Nenhum produto foi selecionado";
             }
         }, null); 
     });
